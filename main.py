@@ -28,7 +28,7 @@ url='https://drive.google.com/file/d/1AL44qt1ZCyzmG-1d3J9dqco3-8oOrYYB/view?usp=
 url='https://drive.google.com/uc?id=' + url.split('/')[-2]
 
 
-data_songs = pd.read_csv(url)
+data_songs = pd.read_csv(url).head(200)
 
 def find_song(name, year):
     song_data = defaultdict()
