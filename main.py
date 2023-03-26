@@ -30,10 +30,24 @@ url='https://drive.google.com/uc?id=' + url.split('/')[-2]
 
 data_songs = pd.read_csv(url).head(200)
 
+sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id="d5bbe2fe821f412f97e32c51c370f8ce",
+                                                        client_secret="9c99ca82d8b04712937a9563a7004f58"))
+
+song_cluster_pipeline = Pipeline([('scaler', StandardScaler()), 
+                                ('kmeans', KMeans(n_clusters=20, 
+                                verbose=0))
+                                ], verbose=0)
+    
+X = data_songs.select_dtypes(np.number)
+number_cols = list(X.columns)
+song_cluster_pipeline.fit(X)
+song_cluster_labels = song_cluster_pipeline.predict(X)
+    
+data_songs['cluster_label'] = song_cluster_labels
+
 def find_song(name, year):
     song_data = defaultdict()
-    sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id="d5bbe2fe821f412f97e32c51c370f8ce",
-                                                        client_secret="9c99ca82d8b04712937a9563a7004f58"))
+   
     results = sp.search(q= 'track: {} year: {}'.format(name,year), limit=1)
     if results['tracks']['items'] == []:
         return None
@@ -98,19 +112,6 @@ def flatten_dict_list(dict_list):
 
 
 def recommend_songs( song_list, spotify_data, n_songs=10):
-    
-    song_cluster_pipeline = Pipeline([('scaler', StandardScaler()), 
-                                ('kmeans', KMeans(n_clusters=20, 
-                                verbose=0))
-                                ], verbose=0)
-    
-
-    X = data_songs.select_dtypes(np.number)
-    number_cols = list(X.columns)
-    song_cluster_pipeline.fit(X)
-    song_cluster_labels = song_cluster_pipeline.predict(X)
-    
-    data_songs['cluster_label'] = song_cluster_labels
     
     metadata_cols = ['name', 'year', 'artists']
     song_dict = flatten_dict_list(song_list)
