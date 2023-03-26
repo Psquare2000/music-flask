@@ -4,8 +4,8 @@ import os
 app = Flask(__name__)
 
 
-@app.route('/')
-def index():
+@app.route('/predict/', methods=['GET'])
+def respond():
     return jsonify({"Choo Choo": "Welcome to your Flask app 🚅"})
 
 
