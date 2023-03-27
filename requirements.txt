@@ -24,3 +24,4 @@ sklearn==0.0.post1
 spotipy==2.22.1
 threadpoolctl==3.1.0
 urllib3==1.26.15
+flask-cors==1.10.3
